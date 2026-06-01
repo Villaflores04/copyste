@@ -17,7 +17,7 @@ export default function Home() {
       .order("id");
 
     if (!error) {
-      setPanels(data);
+      setPanels(data || []);
     }
   }
 
@@ -26,9 +26,17 @@ export default function Home() {
       await navigator.clipboard.writeText(text);
       alert("Text copied!");
     } catch (error) {
-      alert("Failed to copy text.");
       console.error(error);
+      alert("Failed to copy text.");
     }
+  }
+
+  function previewText(text) {
+    if (!text) return "";
+
+    return text.length > 50
+      ? text.substring(0, 50) + "..."
+      : text;
   }
 
   return (
@@ -48,7 +56,7 @@ export default function Home() {
             </button>
 
             <div className="square">
-              {panel.content}
+              {previewText(panel.content)}
             </div>
 
             <button
