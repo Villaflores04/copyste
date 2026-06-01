@@ -11,17 +11,24 @@ export default function Home() {
   }, []);
 
   async function loadPanels() {
-    const { data } = await supabase
+    const { data, error } = await supabase
       .from("panels")
       .select("*")
       .order("id");
 
-    setPanels(data || []);
+    if (!error) {
+      setPanels(data);
+    }
   }
 
-  function copyText(text) {
-    navigator.clipboard.writeText(text);
-    alert("Copied!");
+  async function copyText(text) {
+    try {
+      await navigator.clipboard.writeText(text);
+      alert("Text copied!");
+    } catch (error) {
+      alert("Failed to copy text.");
+      console.error(error);
+    }
   }
 
   return (
@@ -31,11 +38,10 @@ export default function Home() {
       <div className="grid">
         {panels.map((panel) => (
           <div key={panel.id} className="card">
-
             <button
               className="btn"
               onClick={() =>
-                location.href = `/edit/${panel.id}`
+                (window.location.href = `/edit/${panel.id}`)
               }
             >
               Edit
@@ -51,7 +57,6 @@ export default function Home() {
             >
               Copy
             </button>
-
           </div>
         ))}
       </div>
